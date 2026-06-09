@@ -46,6 +46,7 @@ add_shortcode('z4_static_recent_post', function ($atts) {
         return '';
     }
 
+
     ob_start();
 
     while ($query->have_posts()) {
@@ -59,6 +60,15 @@ add_shortcode('z4_static_recent_post', function ($atts) {
 
         $thumb_id = get_post_thumbnail_id($post_id);
         $img_html = '';
+
+
+$featured_alignment = get_post_meta($post_id, '_custom_featured_image_alignment', true);
+
+if (!in_array($featured_alignment, ['left', 'center', 'right'], true)) {
+    $featured_alignment = 'center';
+}
+
+$featured_object_position = $featured_alignment . ' center';
 
         if ($thumb_id) {
             $alt = get_post_meta($thumb_id, '_wp_attachment_image_alt', true);
@@ -74,7 +84,8 @@ add_shortcode('z4_static_recent_post', function ($atts) {
                     'data-pin-no-hover' => 'true',
                     'loading'           => 'eager',
                     'decoding'          => 'async',
-                    'fetchpriority'     => 'high',
+		    'fetchpriority'     => 'high',
+		    'style'             => 'object-position: ' . esc_attr($featured_object_position) . ';',
                 ]
             );
         }
@@ -97,6 +108,7 @@ add_shortcode('z4_static_recent_post', function ($atts) {
                 $term_button_url   = get_term_link($term);
             }
         }
+
 
         if (!empty($term_button_label) && empty($term_button_url)) {
             $term_button_url = '#';
